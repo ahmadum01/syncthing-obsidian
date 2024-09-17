@@ -1,6 +1,6 @@
 SSL_ENABLED := true
 DOMAIN := "yourdomain.com"       # only if SSL_ENABLED = true
-EMAIL := your-email@example.com  # only if SSL_ENABLED = true
+EMAIL := "your-email@example.com"  # only if SSL_ENABLED = true
 
 
 .PHONY: add_execute_permissions
