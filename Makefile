@@ -1,4 +1,4 @@
-SSL_ENABLED := true
+SSL_ENABLED := false
 DOMAIN := "yourdomain.com"       # only if SSL_ENABLED = true
 EMAIL := "your-email@example.com"  # only if SSL_ENABLED = true
 
