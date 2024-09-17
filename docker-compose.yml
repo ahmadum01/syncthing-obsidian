@@ -1,5 +1,8 @@
 services:
   syncthing:
+    profiles:
+      - with_ssl
+      - without_ssl
     image: lscr.io/linuxserver/syncthing:latest
     container_name: syncthing
     hostname: syncthing
@@ -9,14 +12,18 @@ services:
       - TZ=Etc/UTC
     volumes:
       - ./config:/config
+    expose:
+      - 8384
     ports:
-      - 8384:8384
       - 22000:22000/tcp
       - 22000:22000/udp
       - 21027:21027/udp
     restart: unless-stopped
 
   nginx:
+    profiles:
+      - with_ssl
+      - without_ssl
     image: nginx:latest
     container_name: nginx
     ports:
@@ -26,17 +33,16 @@ services:
       - DOMAIN=yourdomain.com
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: /bin/sh -c "envsubst \'\$\{DOMAIN\}\' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf &&nginx -g 'daemon off;'"
     depends_on:
       - syncthing
 
   certbot:
+    profiles:
+      - with_ssl
     image: certbot/certbot
     container_name: certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $!; certbot renew; done'"
