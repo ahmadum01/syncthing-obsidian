@@ -27,3 +27,15 @@ export DOMAIN=${DOMAIN} && envsubst '$${DOMAIN}' < ./nginx/templates/nginx.ssl.c
 echo "Reload nginx"
 docker compose exec nginx nginx -s reload
 
+
+# setup cron job for renew ssl certificates. Job runs every 12 hours.
+CRON_JOB="0 */12 * * * docker compose -f ${PWD}/docker-compose.yml run --rm certbot renew"
+
+crontab -l | grep -Fxq "$CRON_JOB"
+
+if [ "$?" -ne 0 ]; then
+  (crontab -l; echo "$CRON_JOB") | crontab -
+  echo "Cron job added: $CRON_JOB"
+else
+  echo "Cron job already exists: $CRON_JOB"
+fi
